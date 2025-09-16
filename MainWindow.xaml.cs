@@ -20,6 +20,9 @@ namespace Pr4
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow mainWindow;
+        public List<Classes.Pawn> Pawns = new List<Classes.Pawn>();
+
         public MainWindow()
         {
             InitializeComponent();
