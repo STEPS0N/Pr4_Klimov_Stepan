@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace Pr4.Classes
 {
-    internal class Pawn
+    public class Pawn
     {
         public int X {  get; set; }
         public int Y { get; set; }
@@ -24,7 +24,7 @@ namespace Pr4.Classes
             this.Black = Black;
         }
 
-        public void SelectFrigure(object sender, MouseButtonEventArgs e)
+        public void SelectFigure(object sender, MouseButtonEventArgs e)
         {
             bool attack = false;
             Pawn SelectPawn = MainWindow.mainWindow.Pawns.Find(x => x.Select == true);
