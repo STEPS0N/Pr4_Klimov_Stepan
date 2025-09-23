@@ -102,11 +102,17 @@ namespace Pr4
 
         public void OnSelect(Classes.Pawn SelectPawn, Classes.Pawn SelectQueen)
         {
+            ResetHighlights();
+
             foreach (Classes.Pawn Pawn in Pawns)
             {
                 if (Pawn != SelectPawn && Pawn.Select)
                 {
-                    Pawn.SelectFigure(null, null);
+                    Pawn.Select = false;
+                    if (Pawn.Black)
+                        Pawn.Figure.Background = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Images/Pawn (black).png")));
+                    else
+                        Pawn.Figure.Background = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Images/Pawn.png")));
                 }
             }
 
@@ -114,8 +120,21 @@ namespace Pr4
             {
                 if (Pawn != SelectQueen && Pawn.Select)
                 {
-                    Pawn.SelectFigure(null, null);
+                    Pawn.Select = false;
+                    if (Pawn.Black)
+                        Pawn.Figure.Background = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Images/Queen (black).png")));
+                    else
+                        Pawn.Figure.Background = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Images/Queen (white).png")));
                 }
+            }
+
+            if (SelectQueen != null && SelectQueen.Select)
+            {
+                SelectQueen.HighlightQueenMoves();
+            }
+            else if (SelectPawn != null && SelectPawn.Select)
+            {
+                SelectPawn.HighlightPawnMoves();
             }
         }
 
@@ -134,7 +153,51 @@ namespace Pr4
             {
                 SelectQueen.TransformQueen(X, Y);
             }
+            else
+            {
+                ResetHighlights();
+            }
         }
+
+        // Сброс подсветки
+        public void ResetHighlights()
+        {
+            var highlights = gameBoard.Children.OfType<Border>().Where(b => b.Name == "Highlight").ToList();
+            foreach (var highlight in highlights)
+            {
+                gameBoard.Children.Remove(highlight);
+            }
+        }
+
+        // Проверка вражеской фигуры
+        public bool IsEnemy(int x, int y, bool isBlack)
+        {
+            return Pawns.Any(p => p.X == x && p.Y == y && p.Black != isBlack) ||
+                   Queen.Any(q => q.X == x && q.Y == y && q.Black != isBlack);
+        }
+
+        public bool IsCellOccupied(int x, int y)
+        {
+            return Pawns.Any(p => p.X == x && p.Y == y) ||
+                   Queen.Any(q => q.X == x && q.Y == y);
+        }
+
+        public void HighlightCell(int x, int y, SolidColorBrush color)
+        {
+            var highlight = new Border()
+            {
+                Name = "Highlight",
+                Background = color,
+                Width = 50,
+                Height = 50,
+                IsHitTestVisible = false
+            };
+
+            Grid.SetColumn(highlight, x);
+            Grid.SetRow(highlight, y);
+            gameBoard.Children.Add(highlight);
+        }
+
 
     }
 }
